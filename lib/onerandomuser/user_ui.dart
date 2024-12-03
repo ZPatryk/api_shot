@@ -1,11 +1,10 @@
-import 'package:api_shot/user_model.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:api_shot/user_model.dart';
 import '../multirandomuser/user_multi_ui.dart';
 
 class UserUI extends StatelessWidget {
   final UserModel? user; // Dane użytkownika
-  final VoidCallback onFetchUser;
+  final VoidCallback onFetchUser; // Callback do pobierania użytkownika
 
   const UserUI({
     Key? key,
@@ -21,7 +20,7 @@ class UserUI extends StatelessWidget {
       ),
       body: Center(
         child: user == null
-            ? Text('Klinij przycisk aby pobrac dane')
+            ? Text('Kliknij przycisk, aby pobrać dane')
             : Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -34,7 +33,7 @@ class UserUI extends StatelessWidget {
                   SizedBox(height: 20),
                   ElevatedButton(
                       onPressed: onFetchUser,
-                      child: Text('Pobierz nowego użytownika')),
+                      child: Text('Pobierz nowego użytkownika')),
                 ],
               ),
       ),
@@ -45,9 +44,7 @@ class UserUI extends StatelessWidget {
             child: Icon(Icons.refresh),
           ),
           ElevatedButton(
-            // Funkcja, która obsługuje naciśnięcie przycisku
             onPressed: () {
-              // Przejście do kolejnego ekranu za pomocą Navigator.push
               Navigator.push(
                 context,
                 MaterialPageRoute(

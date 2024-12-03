@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import 'onerandomuser/random_user.dart'; // Importuje Fluttera.
+import 'onerandomuser/RandomUserScreen.dart';
 
 void main() {
   runApp(RandomUserApp()); // Uruchamia aplikację.
