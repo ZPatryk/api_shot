@@ -1,7 +1,7 @@
+// random_user_multi_screen.dart
+import 'package:api_shot/multirandomuser/random_mutli_user.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-import '../user_model.dart';
+import '../user_model.dart'; // Importujemy UserModel
 
 class RandomUserMultiScreen extends StatefulWidget {
   const RandomUserMultiScreen({super.key});
@@ -12,22 +12,20 @@ class RandomUserMultiScreen extends StatefulWidget {
 
 class _RandomUserMultiScreenState extends State<RandomUserMultiScreen> {
   List<UserModel>? users; // Lista użytkowników
+  final userService = UserService(); // Tworzymy instancję UserService
 
-  // Funkcja do pobierania 3 użytkowników z API
-  Future<void> fetchRandomUsers() async {
-    final url = Uri.parse('https://randomuser.me/api/?results=3'); // URL API
-    final response = await http.get(url); // Wysyła żądanie GET
-
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body); // Parsowanie JSON-a
+  // Funkcja do wywołania pobierania użytkowników
+  Future<void> loadUsers() async {
+    try {
+      final fetchedUsers = await userService
+          .fetchRandomUsers(); // Pobieranie użytkowników z serwisu
       setState(() {
-        users = (data['results'] as List)
-            .map((userJson) => UserModel.fromJson(userJson))
-            .toList(); // Mapowanie JSON na listę użytkowników
+        users = fetchedUsers; // Ustawiamy stan z pobranymi użytkownikami
       });
-    } else {
+    } catch (e) {
       // Obsługuje błąd
-      throw Exception('Nie udało się pobrać danych');
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Błąd: $e')));
     }
   }
 
@@ -40,17 +38,18 @@ class _RandomUserMultiScreenState extends State<RandomUserMultiScreen> {
       body: users == null
           ? Center(
               child: ElevatedButton(
-                onPressed: fetchRandomUsers, // Pobieranie użytkowników
+                onPressed: loadUsers, // Ładowanie użytkowników po kliknięciu
                 child: const Text('Załaduj użytkowników'),
               ),
             )
           : ListView.builder(
               itemCount: users!.length, // Liczba użytkowników
               itemBuilder: (context, index) {
-                final user = users![index]; // Pobranie użytkownika z listy
+                final user = users![index]; // Pobieranie użytkownika z listy
                 return ListTile(
                   leading: CircleAvatar(
-                    backgroundImage: NetworkImage(user.pictureUrl), // Zdjęcie
+                    backgroundImage:
+                        NetworkImage(user.pictureUrl), // Zdjęcie użytkownika
                   ),
                   title: Text('${user.firstName} ${user.lastName}'),
                   subtitle: Text(user.email), // Email użytkownika
@@ -58,8 +57,8 @@ class _RandomUserMultiScreenState extends State<RandomUserMultiScreen> {
               },
             ),
       floatingActionButton: FloatingActionButton(
-        onPressed: fetchRandomUsers,
-        child: Icon(Icons.refresh),
+        onPressed: loadUsers, // Przycisk do ponownego ładowania danych
+        child: const Icon(Icons.refresh), // Ikona odświeżania
       ),
     );
   }
