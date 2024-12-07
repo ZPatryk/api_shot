@@ -7,7 +7,7 @@ import '../user_model.dart';
 class UserService {
   // Funkcja do pobierania użytkowników z API
   Future<List<UserModel>> fetchRandomUsers() async {
-    final url = Uri.parse('https://randomuser.me/api/?results=3');
+    final url = Uri.parse('https://randomuser.me/api/?results=10');
     final response = await http.get(url); // Wysyłanie zapytania HTTP
 
     if (response.statusCode == 200) {

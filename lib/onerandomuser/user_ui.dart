@@ -30,6 +30,7 @@ class UserUI extends StatelessWidget {
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                   Text('${user!.email}'),
+                  Text('Wiek: ${user!.age}'),
                   SizedBox(height: 20),
                   ElevatedButton(
                       onPressed: onFetchUser,

@@ -3,6 +3,7 @@ class UserModel {
   final String lastName;
   final String email;
   final String pictureUrl;
+  final int age;
 
   // Konstruktor modelu
   UserModel({
@@ -10,6 +11,7 @@ class UserModel {
     required this.lastName,
     required this.email,
     required this.pictureUrl,
+    required this.age,
   });
 
   // Funkcja do mapowania danych JSON na obiekt UserModel
@@ -19,6 +21,7 @@ class UserModel {
       lastName: json['name']['last'],
       email: json['email'],
       pictureUrl: json['picture']['large'],
+      age: json['dob']['age'],
     );
   }
 }
