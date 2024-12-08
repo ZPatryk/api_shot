@@ -16,27 +16,57 @@ class _RandomUserMultiScreenState extends State<RandomUserMultiScreen> {
   final userService = UserService(); // Instancja serwisu
   final TextEditingController searchController =
       TextEditingController(); // Kontroler tekstu
+  int currentPage = 1;
+  bool isLoading = false;
+  bool hasMore = true;
+  ScrollController scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
     loadUsers(); // Automatyczne ładowanie użytkowników przy starcie
+    scrollController.addListener(() {
+      // Sprawdzenie czy użytkownik dotarł do końca listy
+      if (scrollController.position.pixels ==
+              scrollController.position.maxScrollExtent &&
+          hasMore &&
+          !isLoading) {
+        loadUsers(); // Ładuj kolejną stronę
+      }
+    });
   }
 
   // Funkcja do pobrania użytkowników z API
   Future<void> loadUsers() async {
+    if (isLoading) return; // Zapobiega wielokrotnemu ładowaniu
+    setState(() {
+      isLoading = true; // Ustawia flagę ładowania na true
+    });
+
     try {
-      final fetchedUsers =
-          await userService.fetchRandomUsers(); // Pobieranie danych
+      final fetchedUsers = await userService.fetchRandomUsers(
+          page: currentPage); // Pobieranie danych
       setState(() {
-        users = fetchedUsers; // Ustawienie listy użytkowników
-        displayedUsers =
-            List.from(users!); // Początkowo wyświetlana jest pełna lista
+        if (users == null) {
+          users = fetchedUsers; // Jeśli brak danych, inicjalizuj listę
+        } else {
+          users!.addAll(fetchedUsers); // Dodaj nowe dane do istniejących
+        }
+        displayedUsers = List.from(users!); // Dane do wyświetlenia
+
+        hasMore = fetchedUsers.isNotEmpty;
+        if (hasMore) {
+          currentPage++; // Zwiększ numer strony
+        }
       });
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Błąd: $e')),
       );
+    } finally {
+      setState(() {
+        isLoading = false; // Wyłącz flagę ładowania
+      });
     }
   }
 
@@ -76,44 +106,45 @@ class _RandomUserMultiScreenState extends State<RandomUserMultiScreen> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: TextField(
-              controller: searchController, // Kontroler tekstu
+              controller: searchController,
               decoration: const InputDecoration(
                 labelText: 'Wyszukaj użytkownika',
                 border: OutlineInputBorder(),
               ),
-              onChanged: filterUsers, // Filtrowanie w locie
+              onChanged: (query) => filterUsers(query), // Filtrowanie w locie
             ),
           ),
-          ElevatedButton(
-              onPressed: sortUsersAlphabetically,
-              child: Text('Posortuj użytkowników')),
-          // Lista użytkowników lub komunikaty
           Expanded(
             child: displayedUsers == null
                 ? const Center(
-                    child:
-                        CircularProgressIndicator(), // Jeśli dane są ładowane
+                    child: CircularProgressIndicator(), // Ładowanie początkowe
                   )
-                : displayedUsers!.isEmpty
-                    ? const Center(
-                        child: Text(
-                            'Brak wyników do wyświetlenia.'), // Jeśli brak wyników
-                      )
-                    : ListView.builder(
-                        itemCount: displayedUsers!.length,
-                        // Liczba elementów do wyświetlenia
-                        itemBuilder: (context, index) {
-                          final user = displayedUsers![index];
-                          return ListTile(
-                            leading: CircleAvatar(
-                              backgroundImage: NetworkImage(
-                                  user.pictureUrl), // Zdjęcie użytkownika
-                            ),
-                            title: Text('${user.firstName} ${user.lastName}'),
-                            subtitle: Text(user.email),
-                          );
-                        },
-                      ),
+                : ListView.builder(
+                    controller: scrollController,
+                    // Kontroler przewijania
+                    itemCount: displayedUsers!.length + (hasMore ? 1 : 0),
+                    // Dodaj 1 dla wskaźnika ładowania
+                    itemBuilder: (context, index) {
+                      if (index < displayedUsers!.length) {
+                        final user = displayedUsers![index];
+                        return ListTile(
+                          leading: CircleAvatar(
+                            backgroundImage: NetworkImage(user.pictureUrl),
+                          ),
+                          title: Text('${user.firstName} ${user.lastName}'),
+                          subtitle: Text(user.email),
+                        );
+                      } else {
+                        return const Center(
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(vertical: 16.0),
+                            child:
+                                CircularProgressIndicator(), // Wskaźnik ładowania
+                          ),
+                        );
+                      }
+                    },
+                  ),
           ),
         ],
       ),

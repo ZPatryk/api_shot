@@ -5,8 +5,11 @@ import '../user_model.dart';
 
 // Serwis odpowiedzialny za pobieranie użytkowników z API
 class UserService {
-  // Funkcja do pobierania użytkowników z API
-  Future<List<UserModel>> fetchRandomUsers() async {
+  // Funkcja do pobierania użytkowników z API z obsługą paginacji
+  Future<List<UserModel>> fetchRandomUsers({
+    int page = 1, // domyślna pierwsza strona
+    int results = 10, // Liczba uzytkownikow na stronie
+  }) async {
     final url = Uri.parse('https://randomuser.me/api/?results=20');
     final response = await http.get(url); // Wysyłanie zapytania HTTP
 
