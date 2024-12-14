@@ -1,5 +1,6 @@
 import 'package:api_shot/multirandomuser/random_mutli_user.dart';
 import 'package:flutter/material.dart';
+import '../errorscreen/error_screen.dart';
 import '../user_model.dart'; // Import UserModel
 
 class RandomUserMultiScreen extends StatefulWidget {
@@ -60,8 +61,12 @@ class _RandomUserMultiScreenState extends State<RandomUserMultiScreen> {
         }
       });
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Błąd: $e')),
+      // Przekierowanie na ekran błędu
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ErrorScreen(errorMessage: e.toString()),
+        ),
       );
     } finally {
       setState(() {
