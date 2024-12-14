@@ -3,27 +3,40 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../user_model.dart';
 
-// Serwis odpowiedzialny za pobieranie użytkowników z API
-class UserService {
-  // Funkcja do pobierania użytkowników z API z obsługą paginacji
-  Future<List<UserModel>> fetchRandomUsers({
-    int page = 1, // domyślna pierwsza strona
-    int results = 10, // Liczba uzytkownikow na stronie
-  }) async {
-    final url = Uri.parse('https://randomuser.me/api-fake/?results=20');
-    final response = await http.get(url); // Wysyłanie zapytania HTTP
+// Definicja własnych wyjątków dla różnych statusów HTTP
+class NotFoundException implements Exception {}
 
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      return (data['results'] as List)
-          .map((userJson) => UserModel.fromJson(userJson))
-          .toList();
-    } else if (response.statusCode == 404) {
-      throw Exception('Dane nie zostały znalezione (404)');
-    } else if (response.statusCode == 500) {
-      throw Exception('Błąd serwera (500)');
-    } else {
-      throw Exception('Nieznany błąd (status ${response.statusCode})');
+class UnauthorizedException implements Exception {}
+
+class ServerErrorException implements Exception {}
+
+class UnknownErrorException implements Exception {}
+
+class UserService {
+  Future<List<UserModel>> fetchRandomUsers({
+    int page = 1,
+    int results = 10,
+  }) async {
+    final url = Uri.parse(
+        //'https://randomuser.me/api-fake/?results=$results&page=$page');
+        'https://httpstat.us/505');
+    final response = await http.get(url);
+
+    // Obsługa statusów HTTP
+    switch (response.statusCode) {
+      case 200:
+        final data = json.decode(response.body);
+        return (data['results'] as List)
+            .map((userJson) => UserModel.fromJson(userJson))
+            .toList();
+      case 404:
+        throw NotFoundException(); // Błąd 404
+      case 401:
+        throw UnauthorizedException(); // Błąd 401
+      case 500:
+        throw ServerErrorException(); // Błąd 500
+      default:
+        throw UnknownErrorException(); // Nieznany błąd
     }
   }
 }
