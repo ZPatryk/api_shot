@@ -17,9 +17,9 @@ class UserService {
     int page = 1,
     int results = 10,
   }) async {
-    final url = Uri.parse(
-        //'https://randomuser.me/api-fake/?results=$results&page=$page');
-        'https://httpstat.us/505');
+    final url =
+        Uri.parse('https://randomuser.me/api/?results=$results&page=$page');
+    //'https://httpstat.us/505');
     final response = await http.get(url);
 
     // Obsługa statusów HTTP

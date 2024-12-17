@@ -1,3 +1,4 @@
+import 'package:api_shot/multirandomuser/UserDetailsScreen.dart';
 import 'package:api_shot/multirandomuser/random_mutli_user.dart';
 import 'package:flutter/material.dart';
 import '../errorscreen/error_screen401.dart';
@@ -57,30 +58,24 @@ class _RandomUserMultiScreenState extends State<RandomUserMultiScreen> {
         if (hasMore) currentPage++;
       });
     } on NotFoundException {
-      // Przekierowanie na ekran 404
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => const Error404Screen()),
       );
     } on UnauthorizedException {
-      // Przekierowanie na ekran 401
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => const Error401Screen()),
       );
     } on ServerErrorException {
-      // Przekierowanie na ekran 500
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => const Error500Screen()),
       );
     } on UnknownErrorException {
-      // Przekierowanie na ekran nieznanego błędu
       Navigator.push(
         context,
-        MaterialPageRoute(
-          builder: (context) => const ErrorUnknownScreen(),
-        ),
+        MaterialPageRoute(builder: (context) => const ErrorUnknownScreen()),
       );
     } finally {
       setState(() {
@@ -123,6 +118,9 @@ class _RandomUserMultiScreenState extends State<RandomUserMultiScreen> {
                           ),
                           title: Text('${user.firstName} ${user.lastName}'),
                           subtitle: Text(user.email),
+                          onTap: () {
+                            Navigator.of(context).push(_createRoute(user));
+                          },
                         );
                       } else {
                         return const Center(
@@ -137,6 +135,33 @@ class _RandomUserMultiScreenState extends State<RandomUserMultiScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  Route _createRoute(UserModel user) {
+    // Tworzymy niestandardowy route z animacją.
+    return PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) => UserDetailScreen(
+        firstName: user.firstName,
+        lastName: user.lastName,
+      ), // Docelowa strona.
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        // Animacja przejścia: przesunięcie nowej strony.
+        const begin = Offset(
+            1.0, 0.0); // Początek animacji (poza ekranem z prawej strony).
+        const end = Offset.zero; // Koniec animacji (na środku ekranu).
+        const curve = Curves.easeInOut; // Typ krzywej animacji.
+
+        var tween = Tween(begin: begin, end: end)
+            .chain(CurveTween(curve: curve)); // Łączymy tween z krzywą.
+        var offsetAnimation = animation.drive(tween);
+
+        return SlideTransition(
+          position: offsetAnimation, // Przekazujemy animację przesunięcia.
+          child: child, // Dziecko, czyli strona docelowa.
+        );
+      },
+      transitionDuration: Duration(milliseconds: 1500),
     );
   }
 
