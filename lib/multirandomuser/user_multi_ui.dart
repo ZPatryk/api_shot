@@ -1,4 +1,4 @@
-import 'package:api_shot/multirandomuser/UserDetailsScreen.dart';
+import 'package:api_shot/UserDetailsScreen.dart';
 import 'package:api_shot/multirandomuser/random_mutli_user.dart';
 import 'package:flutter/material.dart';
 import '../errorscreen/error_screen401.dart';
@@ -103,6 +103,9 @@ class _RandomUserMultiScreenState extends State<RandomUserMultiScreen> {
               onChanged: (query) => filterUsers(query),
             ),
           ),
+          ElevatedButton(
+              onPressed: sortUserAlphabetically,
+              child: Text('Posortuj użytkowników')),
           Expanded(
             child: displayedUsers == null
                 ? const Center(child: CircularProgressIndicator())
@@ -163,6 +166,12 @@ class _RandomUserMultiScreenState extends State<RandomUserMultiScreen> {
       },
       transitionDuration: Duration(milliseconds: 1500),
     );
+  }
+
+  void sortUserAlphabetically() {
+    setState(() {
+      displayedUsers!.sort((a, b) => a.firstName.compareTo(b.firstName));
+    });
   }
 
   void filterUsers(String query) {
