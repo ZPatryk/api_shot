@@ -105,7 +105,7 @@ class _RandomUserMultiScreenState extends State<RandomUserMultiScreen> {
           ),
           ElevatedButton(
               onPressed: sortUserAlphabetically,
-              child: Text('Posortuj użytkowników')),
+              child: const Text('Posortuj użytkowników')),
           Expanded(
             child: displayedUsers == null
                 ? const Center(child: CircularProgressIndicator())
@@ -147,6 +147,10 @@ class _RandomUserMultiScreenState extends State<RandomUserMultiScreen> {
       pageBuilder: (context, animation, secondaryAnimation) => UserDetailScreen(
         firstName: user.firstName,
         lastName: user.lastName,
+        gender: user.gender,
+        city: user.city,
+        country: user.country,
+        postcode: user.postcode,
       ), // Docelowa strona.
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         // Animacja przejścia: przesunięcie nowej strony.
