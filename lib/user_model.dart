@@ -21,6 +21,7 @@ class UserModel {
     required this.pictureUrl,
     required this.age,
     required name,
+    required id,
   });
 
   // Funkcja do mapowania danych JSON na obiekt UserModel
@@ -37,9 +38,41 @@ class UserModel {
 
       postcode: json['location']['postcode'] is int
           ? json['location']['postcode'] // jesli jest int, zostaw
-          : int.tryParse(json['location']['postcode']?.toString() ??
-              ''), //jesli String to proba sparsowania
-      name: json['name']['first'] ?? 'Unknow',
+          : int.tryParse(json['location']['postcode']?.toString() ?? ''),
+      //jesli String to proba sparsowania
+      name: json['name']['first'] ?? 'Unknow', id: null,
+    );
+  }
+
+  // metoda konwersji obiektu na Mapę, aby zapisac w SQLite
+  Map<String, dynamic> toMap() {
+    return {
+      'firstName': firstName,
+      'lastName': lastName,
+      'email': email,
+      'pictureUrl': pictureUrl,
+      'age': age,
+      'gender': gender,
+      'city': city,
+      'country': country,
+      'postcode': postcode,
+    };
+  }
+
+  // Metoda do mapowania Map<String, dynamic> na obiekt UserModel (z SqLite)
+  factory UserModel.fromMap(Map<String, dynamic> map) {
+    return UserModel(
+      firstName: map['firstName'],
+      lastName: map['lastName'],
+      email: map['email'],
+      pictureUrl: map['pictureUrl'],
+      age: map['age'],
+      gender: map['gender'],
+      city: map['city'],
+      country: map['country'],
+      postcode: map['postcode'],
+      name: map['firstName'],
+      id: null,
     );
   }
 }

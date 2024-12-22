@@ -1,10 +1,12 @@
 import 'package:api_shot/UserDetailsScreen.dart';
 import 'package:api_shot/multirandomuser/random_mutli_user.dart';
+import 'package:api_shot/user_list.dart';
 import 'package:flutter/material.dart';
 import '../errorscreen/error_screen401.dart';
 import '../errorscreen/error_screen404.dart';
 import '../errorscreen/error_screen500.dart';
 import '../errorscreen/error_screenUnknow.dart';
+import '../sqlite/database_helper.dart';
 import '../user_model.dart';
 
 class RandomUserMultiScreen extends StatefulWidget {
@@ -23,6 +25,15 @@ class _RandomUserMultiScreenState extends State<RandomUserMultiScreen> {
   bool isLoading = false;
   bool hasMore = true;
   ScrollController scrollController = ScrollController();
+
+  // inicjalizacja bazydanych
+  final UserDatabase database = UserDatabase();
+
+  void _onUserPressed(UserModel user) {
+    // Zapisanie użytkownika do bazy danych
+    database.insertUser(user);
+    print('Użytkownik zapisany do bazy danych: ${user.firstName}');
+  }
 
   @override
   void initState() {
@@ -89,6 +100,19 @@ class _RandomUserMultiScreenState extends State<RandomUserMultiScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Losowi użytkownicy'),
+        actions: [
+          // dodanie ikony w prawym rogu AppBar
+          IconButton(
+            icon: const Icon(Icons.navigate_next), // ikona strzałki
+            onPressed: () {
+              // nawigacja do kolejnego ekranu
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => UserListPage()),
+              );
+            },
+          ),
+        ],
       ),
       body: Column(
         children: [
@@ -124,6 +148,12 @@ class _RandomUserMultiScreenState extends State<RandomUserMultiScreen> {
                           onTap: () {
                             Navigator.of(context).push(_createRoute(user));
                           },
+                          trailing: GestureDetector(
+                            onTap: () {
+                              _onUserPressed(user);
+                            },
+                            child: Icon(Icons.save),
+                          ),
                         );
                       } else {
                         return const Center(
