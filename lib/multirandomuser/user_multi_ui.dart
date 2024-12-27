@@ -29,12 +29,6 @@ class _RandomUserMultiScreenState extends State<RandomUserMultiScreen> {
   // inicjalizacja bazydanych
   final UserDatabase database = UserDatabase();
 
-  void _onUserPressed(UserModel user) {
-    // Zapisanie użytkownika do bazy danych
-    database.insertUser(user);
-    print('Użytkownik zapisany do bazy danych: ${user.firstName}');
-  }
-
   @override
   void initState() {
     super.initState();
@@ -151,6 +145,7 @@ class _RandomUserMultiScreenState extends State<RandomUserMultiScreen> {
                           trailing: GestureDetector(
                             onTap: () {
                               _onUserPressed(user);
+                              _showDialog(context);
                             },
                             child: Icon(Icons.save),
                           ),
@@ -199,6 +194,32 @@ class _RandomUserMultiScreenState extends State<RandomUserMultiScreen> {
         );
       },
       transitionDuration: Duration(milliseconds: 1500),
+    );
+  }
+
+  void _onUserPressed(UserModel user) {
+    // Zapisanie użytkownika do bazy danych
+    database.insertUser(user);
+    print('Użytkownik zapisany do bazy danych: ${user.firstName}');
+  }
+
+  void _showDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Informacja'),
+          content: Text('Zapisano użytkownika'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Zamknij'),
+            ),
+          ],
+        );
+      },
     );
   }
 

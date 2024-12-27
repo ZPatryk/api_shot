@@ -21,7 +21,6 @@ class UserModel {
     required this.pictureUrl,
     required this.age,
     required name,
-    required id,
   });
 
   // Funkcja do mapowania danych JSON na obiekt UserModel
@@ -40,7 +39,7 @@ class UserModel {
           ? json['location']['postcode'] // jesli jest int, zostaw
           : int.tryParse(json['location']['postcode']?.toString() ?? ''),
       //jesli String to proba sparsowania
-      name: json['name']['first'] ?? 'Unknow', id: null,
+      name: json['name']['first'] ?? 'Unknow',
     );
   }
 
@@ -72,7 +71,6 @@ class UserModel {
       country: map['country'],
       postcode: map['postcode'],
       name: map['firstName'],
-      id: null,
     );
   }
 }

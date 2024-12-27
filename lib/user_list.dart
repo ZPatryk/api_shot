@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import '../user_model.dart'; // Model użytkownika
 
 class UserListPage extends StatelessWidget {
-  final UserDatabase userDatabase = UserDatabase(); // Instancja bazy danych
+  // Instancja bazy danych
+  final UserDatabase userDatabase = UserDatabase();
 
   @override
   Widget build(BuildContext context) {
@@ -40,9 +41,10 @@ class UserListPage extends StatelessWidget {
                         ? Icon(Icons.person) // Ikonka, jeśli brak zdjęcia
                         : null,
                   ),
-                  title: Text(
-                      '${user.firstName} ${user.lastName}'), // Imię i nazwisko
-                  subtitle: Text(user.email), // E-mail
+                  title: Text('${user.firstName} ${user.lastName}'),
+                  // Imię i nazwisko
+                  subtitle: Text(user.email),
+                  // E-mail
                   trailing: Text(user.age != null ? '${user.age} lat' : ''),
                 );
               },

@@ -1,7 +1,9 @@
+import 'package:api_shot/sqlite/database_helper.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class UserDetailScreen extends StatelessWidget {
+
   final String firstName;
   final String lastName;
 
@@ -13,7 +15,7 @@ class UserDetailScreen extends StatelessWidget {
 
   final dynamic postcode;
 
-  const UserDetailScreen({
+  UserDetailScreen({
     super.key,
     required this.firstName,
     required this.lastName,
@@ -43,6 +45,7 @@ class UserDetailScreen extends StatelessWidget {
               Text('Kraj: $country'),
               Text('Miasto: $city'),
               Text('Kod pocztowy: $postcode'),
+
               SizedBox(height: 20),
             ],
           ),

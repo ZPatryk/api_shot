@@ -68,4 +68,16 @@ class UserDatabase {
     // Mapowanie danych z SQLite na listę obiektów UserModel
     return maps.map((map) => UserModel.fromMap(map)).toList();
   }
+
+  // Metoda do usuwania użytkownika z bazy danych
+  Future<void> deleteUser(int id) async {
+    final db = await database;
+
+    // Usuwanie użytkownika na podstawie jego id
+    await db.delete(
+      'users',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
 }
