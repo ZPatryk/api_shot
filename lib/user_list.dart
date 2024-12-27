@@ -45,7 +45,19 @@ class UserListPage extends StatelessWidget {
                   // Imię i nazwisko
                   subtitle: Text(user.email),
                   // E-mail
-                  trailing: Text(user.age != null ? '${user.age} lat' : ''),
+                  //trailing: Text(user.age != null ? '${user.age} lat' : ''),
+                  trailing: IconButton(
+                    icon: Icon(
+                      Icons.delete,
+                      color: Colors.red,
+                    ),
+                    onPressed: () async {
+                      if (user.id != null) {
+                        await userDatabase.deleteUser(
+                            user.id!); // Usuwamy użytkownika za pomocą jego ID
+                      }
+                    },
+                  ),
                 );
               },
             );
