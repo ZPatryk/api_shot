@@ -1,4 +1,4 @@
-import 'package:api_shot/UserDetailsScreen.dart';
+import 'package:api_shot/multirandomuser/userdetailscreen/UserDetailsScreen.dart';
 import 'package:api_shot/multirandomuser/random_mutli_user.dart';
 import 'package:api_shot/user_list.dart';
 import 'package:flutter/material.dart';
@@ -94,6 +94,7 @@ class _RandomUserMultiScreenState extends State<RandomUserMultiScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Losowi użytkownicy'),
+        backgroundColor: Colors.cyan,
         actions: [
           // dodanie ikony w prawym rogu AppBar
           IconButton(
@@ -108,60 +109,66 @@ class _RandomUserMultiScreenState extends State<RandomUserMultiScreen> {
           ),
         ],
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: TextField(
-              controller: searchController,
-              decoration: const InputDecoration(
-                labelText: 'Wyszukaj użytkownika',
-                border: OutlineInputBorder(),
+      body: Container(
+        color: Colors.cyanAccent,
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextField(
+                controller: searchController,
+                decoration: const InputDecoration(
+                  labelText: 'Wyszukaj użytkownika',
+                  border: OutlineInputBorder(),
+                ),
+                onChanged: (query) => filterUsers(query),
               ),
-              onChanged: (query) => filterUsers(query),
             ),
-          ),
-          ElevatedButton(
-              onPressed: sortUserAlphabetically,
-              child: const Text('Posortuj użytkowników')),
-          Expanded(
-            child: displayedUsers == null
-                ? const Center(child: CircularProgressIndicator())
-                : ListView.builder(
-                    controller: scrollController,
-                    itemCount: displayedUsers!.length + (hasMore ? 1 : 0),
-                    itemBuilder: (context, index) {
-                      if (index < displayedUsers!.length) {
-                        final user = displayedUsers![index];
-                        return ListTile(
-                          leading: CircleAvatar(
-                            backgroundImage: NetworkImage(user.pictureUrl),
-                          ),
-                          title: Text('${user.firstName} ${user.lastName}'),
-                          subtitle: Text(user.email),
-                          onTap: () {
-                            Navigator.of(context).push(_createRoute(user));
-                          },
-                          trailing: GestureDetector(
+            ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.lightBlueAccent,
+                ),
+                onPressed: sortUserAlphabetically,
+                child: const Text('Posortuj użytkowników')),
+            Expanded(
+              child: displayedUsers == null
+                  ? const Center(child: CircularProgressIndicator())
+                  : ListView.builder(
+                      controller: scrollController,
+                      itemCount: displayedUsers!.length + (hasMore ? 1 : 0),
+                      itemBuilder: (context, index) {
+                        if (index < displayedUsers!.length) {
+                          final user = displayedUsers![index];
+                          return ListTile(
+                            leading: CircleAvatar(
+                              backgroundImage: NetworkImage(user.pictureUrl),
+                            ),
+                            title: Text('${user.firstName} ${user.lastName}'),
+                            subtitle: Text(user.email),
                             onTap: () {
-                              _onUserPressed(user);
-                              _showDialog(context);
+                              Navigator.of(context).push(_createRoute(user));
                             },
-                            child: Icon(Icons.save),
-                          ),
-                        );
-                      } else {
-                        return const Center(
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(vertical: 16.0),
-                            child: CircularProgressIndicator(),
-                          ),
-                        );
-                      }
-                    },
-                  ),
-          ),
-        ],
+                            trailing: GestureDetector(
+                              onTap: () {
+                                _onUserPressed(user);
+                                _showDialog(context);
+                              },
+                              child: Icon(Icons.save),
+                            ),
+                          );
+                        } else {
+                          return const Center(
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(vertical: 16.0),
+                              child: CircularProgressIndicator(),
+                            ),
+                          );
+                        }
+                      },
+                    ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -2,9 +2,26 @@ import 'package:api_shot/sqlite/database_helper.dart';
 import 'package:flutter/material.dart';
 import '../user_model.dart'; // Model użytkownika
 
-class UserListPage extends StatelessWidget {
-  // Instancja bazy danych
-  final UserDatabase userDatabase = UserDatabase();
+class UserListPage extends StatefulWidget {
+  @override
+  _UserListPageState createState() => _UserListPageState();
+}
+
+class _UserListPageState extends State<UserListPage> {
+  final UserDatabase userDatabase = UserDatabase(); // Instancja bazy danych
+  late Future<List<UserModel>>
+      _usersFuture; // Przechowywanie danych użytkowników
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUsers();
+  }
+
+  // meroda do ladowania danych
+  void _loadUsers() {
+    _usersFuture = userDatabase.getUsers();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,9 +70,12 @@ class UserListPage extends StatelessWidget {
                     ),
                     onPressed: () async {
                       if (user.id != null) {
-                        await userDatabase.deleteUser(
-                            user.id!); // Usuwamy użytkownika za pomocą jego ID
+                        await userDatabase.deleteUser(user.id!);
+                        // Usuwamy użytkownika za pomocą jego ID
                       }
+                      setState(() {
+                        _loadUsers();
+                      });
                     },
                   ),
                 );

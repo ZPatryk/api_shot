@@ -1,9 +1,7 @@
-import 'package:api_shot/sqlite/database_helper.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class UserDetailScreen extends StatelessWidget {
-
+class UserDetailScreen extends StatefulWidget {
   final String firstName;
   final String lastName;
 
@@ -26,26 +24,42 @@ class UserDetailScreen extends StatelessWidget {
   });
 
   @override
+  _UserDetailScreenState createState() => _UserDetailScreenState();
+}
+
+class _UserDetailScreenState extends State<UserDetailScreen> {
+  double _textPosition = -200; // początkowa pozycja poza ekranem
+
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(Duration(milliseconds: 300), () {
+      setState(() {
+        _textPosition = 0; // przesuniecie tekstu na srodek
+      });
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color.fromARGB(12, 12, 12, 12),
-        title: Text('$firstName $lastName'),
+        backgroundColor: const Color.fromARGB(120, 6, 172, 86),
+        title: Text('${widget.firstName} ${widget.lastName}'),
       ),
       body: Container(
-        color: const Color.fromARGB(255, 171, 154, 189), // Brakujący przecinek
+        color: const Color.fromARGB(255, 60, 193, 12),
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                'Płeć: $gender',
+                'Płeć: ${widget.gender}',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
-              Text('Kraj: $country'),
-              Text('Miasto: $city'),
-              Text('Kod pocztowy: $postcode'),
-
+              Text('Kraj: ${widget.country}'),
+              Text('Miasto: ${widget.city}'),
+              Text('Kod pocztowy: ${widget.postcode}'),
               SizedBox(height: 20),
             ],
           ),
