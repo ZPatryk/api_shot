@@ -1,16 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../../utils/styles.dart';
+
 class UserDetailScreen extends StatefulWidget {
   final String firstName;
   final String lastName;
-
   final dynamic gender;
-
   final dynamic city;
-
   final dynamic country;
-
   final dynamic postcode;
 
   UserDetailScreen({
@@ -28,16 +26,39 @@ class UserDetailScreen extends StatefulWidget {
 }
 
 class _UserDetailScreenState extends State<UserDetailScreen> {
-  double _textPosition = -200; // początkowa pozycja poza ekranem
-
-  @override
-  void initState() {
-    super.initState();
-    Future.delayed(Duration(milliseconds: 300), () {
-      setState(() {
-        _textPosition = 0; // przesuniecie tekstu na srodek
-      });
-    });
+  // Funkcja odpowiedzialna za animację
+  Widget animatedText(String text, Duration duration) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Colors.white, // Tło elementu
+          borderRadius: BorderRadius.circular(8), // Zaokrąglenie rogów
+          boxShadow: const [
+            BoxShadow(
+              color: Colors.black26, // Cień
+              offset: Offset(0, 4),
+              blurRadius: 6,
+            ),
+          ],
+        ),
+        child: TweenAnimationBuilder<double>(
+          tween: Tween<double>(begin: 200, end: 0), // Zakres przesunięcia
+          duration: duration, // Różne czasy trwania
+          curve: Curves.easeInOut, // Krzywa animacji
+          builder: (context, value, child) {
+            return Transform.translate(
+              offset: Offset(value, 0), // Przesunięcie w poziomie
+              child: Text(
+                text,
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+            );
+          },
+        ),
+      ),
+    );
   }
 
   @override
@@ -51,16 +72,18 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
         color: const Color.fromARGB(255, 60, 193, 12),
         child: Center(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                'Płeć: ${widget.gender}',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-              Text('Kraj: ${widget.country}'),
-              Text('Miasto: ${widget.city}'),
-              Text('Kod pocztowy: ${widget.postcode}'),
-              SizedBox(height: 20),
+              animatedText('Płeć: ${widget.gender}', Duration(seconds: 2)),
+              AppStyles.mediumSpacing,
+              animatedText('Kraj: ${widget.country}', Duration(seconds: 3)),
+              AppStyles.mediumSpacing,
+              animatedText('Miasto: ${widget.city}', Duration(seconds: 4)),
+              AppStyles.mediumSpacing,
+              animatedText(
+                  'Kod pocztowy: ${widget.postcode}', Duration(seconds: 5)),
+              AppStyles.mediumSpacing,
             ],
           ),
         ),
